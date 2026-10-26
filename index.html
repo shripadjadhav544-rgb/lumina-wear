@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumina Wear | Premium Dark Luxury Clothing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              400: '#D4AF37',
+              500: '#C9A227',
+              600: '#B8860B',
+            },
+            dark: {
+              900: '#0a0a0a',
+              800: '#111111',
+              700: '#1a1a1a',
+              600: '#222222',
+            }
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0a0a0a; color: #e5e5e5; }
+    .gold-gradient { background: linear-gradient(135deg, #D4AF37, #B8860B); }
+    .text-gold-gradient {
+      background: linear-gradient(135deg, #D4AF37, #F5D76E);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    #canvas-container canvas { outline: none; }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15); }
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: #D4AF37;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+  </style>
+</head>
+<body class="font-sans antialiased">
+
+  <!-- Navbar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-dark-900/90 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#" class="font-serif text-2xl tracking-wider text-gold-gradient">LUMINA</a>
+      <div class="hidden md:flex items-center gap-10 text-sm tracking-wide">
+        <a href="#collection" class="nav-link text-gray-300 hover:text-gold-400 transition">Collection</a>
+        <a href="#3d-studio" class="nav-link text-gray-300 hover:text-gold-400 transition">3D Studio</a>
+        <a href="#about" class="nav-link text-gray-300 hover:text-gold-400 transition">About</a>
+        <a href="#contact" class="nav-link text-gray-300 hover:text-gold-400 transition">Contact</a>
+      </div>
+      <div class="flex items-center gap-6">
+        <button class="text-gray-300 hover:text-gold-400 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+        <button class="relative text-gray-300 hover:text-gold-400 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <span class="absolute -top-2 -right-2 bg-gold-500 text-dark-900 text-xs w-4 h-4 rounded-full flex items-center justify-center font-medium">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900"></div>
+    <div class="absolute top-1/4 right-0 w-[600px] h-[600px] bg-gold-500/5 rounded-full blur-[120px]"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+      <div class="space-y-8">
+        <p class="text-gold-400 tracking-[0.3em] text-sm uppercase">Premium Collection 2026</p>
+        <h1 class="font-serif text-5xl md:text-7xl leading-tight">
+          Elevate Your<br>
+          <span class="text-gold-gradient">Presence</span>
+        </h1>
+        <p class="text-gray-400 text-lg max-w-md leading-relaxed">
+          Discover the art of refined luxury. Handcrafted essentials designed for those who appreciate the finer details.
+        </p>
+        <div class="flex gap-4 pt-4">
+          <a href="#collection" class="gold-gradient text-dark-900 px-8 py-3.5 rounded-full font-medium tracking-wide hover:opacity-90 transition">
+            Shop Collection
+          </a>
+          <a href="#3d-studio" class="border border-gold-500/40 text-gold-400 px-8 py-3.5 rounded-full font-medium tracking-wide hover:bg-gold-500/10 transition">
+            Experience 3D
+          </a>
+        </div>
+      </div>
+      
+      <div class="relative h-[500px] md:h-[600px]">
+        <div id="hero-canvas" class="w-full h-full rounded-2xl overflow-hidden border border-white/5"></div>
+        <div class="absolute bottom-6 left-6 bg-dark-800/80 backdrop-blur px-4 py-2 rounded-full text-sm text-gold-400 border border-gold-500/20">
+          Drag to rotate • Scroll to zoom
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collection -->
+  <section id="collection" class="py-24 bg-dark-800">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <p class="text-gold-400 tracking-[0.3em] text-sm uppercase mb-3">Curated Selection</p>
+        <h2 class="font-serif text-4xl md:text-5xl">Signature Pieces</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="product-grid">
+        <!-- Products will be injected here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 3D Studio -->
+  <section id="3d-studio" class="py-24 relative">
+    <div class="absolute inset-0 bg-gradient-to-b from-dark-900 to-dark-800"></div>
+    <div class="relative max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <p class="text-gold-400 tracking-[0.3em] text-sm uppercase mb-3">Interactive Experience</p>
+        <h2 class="font-serif text-4xl md:text-5xl mb-4">3D Product Studio</h2>
+        <p class="text-gray-400 max-w-xl mx-auto">Rotate, zoom and explore every detail of our premium garments in real-time 3D.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-8 items-start">
+        <div class="lg:col-span-2">
+          <div id="studio-canvas" class="w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden border border-white/10 bg-dark-900"></div>
+        </div>
+        
+        <div class="space-y-6 bg-dark-700/50 p-8 rounded-2xl border border-white/5">
+          <h3 class="font-serif text-2xl text-gold-400" id="studio-title">Classic Black Tee</h3>
+          <p class="text-gray-400 text-sm leading-relaxed" id="studio-desc">Premium heavyweight cotton with a soft hand-feel. Designed for everyday luxury.</p>
+          
+          <div>
+            <p class="text-sm text-gray-500 mb-3">Select Color</p>
+            <div class="flex gap-3" id="color-options">
+              <button onclick="changeColor(0x1a1a1a)" class="w-8 h-8 rounded-full bg-neutral-900 border-2 border-gold-500 ring-2 ring-gold-500/30"></button>
+              <button onclick="changeColor(0xffffff)" class="w-8 h-8 rounded-full bg-white border border-gray-600"></button>
+              <button onclick="changeColor(0x1e3a5f)" class="w-8 h-8 rounded-full bg-blue-900 border border-gray-600"></button>
+              <button onclick="changeColor(0x2d1b1b)" class="w-8 h-8 rounded-full bg-red-950 border border-gray-600"></button>
+              <button onclick="changeColor(0x1a2e1a)" class="w-8 h-8 rounded-full bg-green-950 border border-gray-600"></button>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500 mb-3">Size</p>
+            <div class="flex gap-2">
+              <button class="size-btn px-4 py-2 border border-white/20 rounded text-sm hover:border-gold-500 hover:text-gold-400 transition">S</button>
+              <button class="size-btn px-4 py-2 border border-gold-500 text-gold-400 rounded text-sm">M</button>
+              <button class="size-btn px-4 py-2 border border-white/20 rounded text-sm hover:border-gold-500 hover:text-gold-400 transition">L</button>
+              <button class="size-btn px-4 py-2 border border-white/20 rounded text-sm hover:border-gold-500 hover:text-gold-400 transition">XL</button>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-white/10">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-3xl font-serif text-gold-400">₹2,499</span>
+              <span class="text-sm text-gray-500 line-through">₹3,299</span>
+            </div>
+            <button class="w-full gold-gradient text-dark-900 py-3.5 rounded-full font-medium tracking-wide hover:opacity-90 transition">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-24 bg-dark-800">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <p class="text-gold-400 tracking-[0.3em] text-sm uppercase mb-4">Our Philosophy</p>
+      <h2 class="font-serif text-4xl mb-8">Crafted for the Discerning</h2>
+      <p class="text-gray-400 text-lg leading-relaxed">
+        At Lumina Wear, we believe clothing should be more than fabric — it should be an expression of refined taste. 
+        Every piece is thoughtfully designed using premium materials, ensuring comfort that lasts and style that endures.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 py-12 bg-dark-900">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="font-serif text-xl text-gold-gradient">LUMINA</div>
+      <p class="text-gray-500 text-sm">© 2026 Lumina Wear. All rights reserved.</p>
+      <div class="flex gap-6 text-sm text-gray-400">
+        <a href="#" class="hover:text-gold-400 transition">Instagram</a>
+        <a href="#" class="hover:text-gold-400 transition">Twitter</a>
+        <a href="#" class="hover:text-gold-400 transition">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Products Data
+    const products = [
+      { id: 1, name: "Obsidian Tee", price: 2499, image: "https://images.unsplash.com/photo-1521572163474-6854f9bf17f4?w=600&q=80", category: "Essential" },
+      { id: 2, name: "Midnight Hoodie", price: 4499, image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&q=80", category: "Outerwear" },
+      { id: 3, name: "Gold Accent Shirt", price: 3299, image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&q=80", category: "Formal" },
+      { id: 4, name: "Shadow Oversized", price: 2799, image: "https://images.unsplash.com/photo-1576566613855-168c3110482a?w=600&q=80", category: "Street" },
+      { id: 5, name: "Luxe Polo", price: 2999, image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=600&q=80", category: "Casual" },
+      { id: 6, name: "Noir Longsleeve", price: 2699, image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=600&q=80", category: "Essential" },
+    ];
+
+    // Render Products
+    const grid = document.getElementById('product-grid');
+    products.forEach(p => {
+      grid.innerHTML += `
+        <div class="product-card bg-dark-700/40 border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer group">
+          <div class="aspect-[3/4] overflow-hidden bg-dark-600">
+            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+          </div>
+          <div class="p-5">
+            <p class="text-xs text-gold-500 tracking-wider mb-1">${p.category}</p>
+            <h3 class="font-serif text-xl mb-2">${p.name}</h3>
+            <div class="flex items-center justify-between">
+              <span class="text-gold-400 font-medium">₹${p.price.toLocaleString()}</span>
+              <button class="text-sm border border-gold-500/40 text-gold-400 px-4 py-1.5 rounded-full hover:bg-gold-500 hover:text-dark-900 transition">
+                View
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    // ========== 3D SETUP ==========
+    let scene, camera, renderer, controls, shirtMesh;
+
+    function createTShirtGeometry() {
+      // Create a stylized T-shirt using basic shapes
+      const group = new THREE.Group();
+
+      // Body
+      const bodyGeo = new THREE.BoxGeometry(2.2, 2.8, 0.4);
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.7, metalness: 0.1 });
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      body.position.y = 0.2;
+      group.add(body);
+
+      // Left Sleeve
+      const sleeveGeo = new THREE.BoxGeometry(1.1, 0.7, 0.4);
+      const leftSleeve = new THREE.Mesh(sleeveGeo, bodyMat.clone());
+      leftSleeve.position.set(-1.5, 1.1, 0);
+      leftSleeve.rotation.z = 0.3;
+      group.add(leftSleeve);
+
+      // Right Sleeve
+      const rightSleeve = new THREE.Mesh(sleeveGeo, bodyMat.clone());
+      rightSleeve.position.set(1.5, 1.1, 0);
+      rightSleeve.rotation.z = -0.3;
+      group.add(rightSleeve);
+
+      // Collar
+      const collarGeo = new THREE.TorusGeometry(0.55, 0.12, 8, 20, Math.PI);
+      const collar = new THREE.Mesh(collarGeo, bodyMat.clone());
+      collar.position.set(0, 1.55, 0.1);
+      collar.rotation.x = Math.PI / 2;
+      group.add(collar);
+
+      // Slight neck opening
+      const neckGeo = new THREE.CylinderGeometry(0.45, 0.5, 0.3, 16);
+      const neck = new THREE.Mesh(neckGeo, bodyMat.clone());
+      neck.position.y = 1.5;
+      group.add(neck);
+
+      return group;
+    }
+
+    function initScene(containerId, isHero = false) {
+      const container = document.getElementById(containerId);
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      const localScene = new THREE.Scene();
+      localScene.background = new THREE.Color(0x0a0a0a);
+
+      const localCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      localCamera.position.set(0, 0.5, 6);
+
+      const localRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      localRenderer.setSize(width, height);
+      localRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      localRenderer.shadowMap.enabled = true;
+      container.appendChild(localRenderer.domElement);
+
+      // Lights
+      const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+      localScene.add(ambient);
+
+      const keyLight = new THREE.DirectionalLight(0xfff5e0, 1.2);
+      keyLight.position.set(5, 8, 5);
+      keyLight.castShadow = true;
+      localScene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0xd4af37, 0.4);
+      fillLight.position.set(-4, 2, -3);
+      localScene.add(fillLight);
+
+      const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+      rimLight.position.set(0, 3, -6);
+      localScene.add(rimLight);
+
+      // T-shirt
+      const shirt = createTShirtGeometry();
+      localScene.add(shirt);
+
+      // Floor reflection-ish
+      const floorGeo = new THREE.CircleGeometry(4, 32);
+      const floorMat = new THREE.MeshStandardMaterial({ 
+        color: 0x111111, 
+        roughness: 0.3, 
+        metalness: 0.6,
+        transparent: true,
+        opacity: 0.6
+      });
+      const floor = new THREE.Mesh(floorGeo, floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.y = -1.6;
+      localScene.add(floor);
+
+      const localControls = new THREE.OrbitControls(localCamera, localRenderer.domElement);
+      localControls.enableDamping = true;
+      localControls.dampingFactor = 0.05;
+      localControls.minDistance = 3;
+      localControls.maxDistance = 10;
+      localControls.maxPolarAngle = Math.PI / 1.5;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        shirt.rotation.y += isHero ? 0.005 : 0;
+        localControls.update();
+        localRenderer.render(localScene, localCamera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        localCamera.aspect = w / h;
+        localCamera.updateProjectionMatrix();
+        localRenderer.setSize(w, h);
+      });
+
+      return { scene: localScene, shirt, controls: localControls };
+    }
+
+    // Init both canvases
+    const hero = initScene('hero-canvas', true);
+    const studio = initScene('studio-canvas', false);
+
+    // Color changer for studio
+    function changeColor(hex) {
+      studio.shirt.traverse((child) => {
+        if (child.isMesh) {
+          child.material.color.setHex(hex);
+        }
+      });
+
+      // Update active button style
+      document.querySelectorAll('#color-options button').forEach(btn => {
+        btn.classList.remove('ring-2', 'ring-gold-500/30', 'border-gold-500');
+        btn.classList.add('border-gray-600');
+      });
+      event.target.classList.add('ring-2', 'ring-gold-500/30', 'border-gold-500');
+      event.target.classList.remove('border-gray-600');
+    }
+
+    // Size buttons
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.size-btn').forEach(b => {
+          b.classList.remove('border-gold-500', 'text-gold-400');
+          b.classList.add('border-white/20');
+        });
+        this.classList.add('border-gold-500', 'text-gold-400');
+        this.classList.remove('border-white/20');
+      });
+    });
+  </script>
+</body>
+</html>
